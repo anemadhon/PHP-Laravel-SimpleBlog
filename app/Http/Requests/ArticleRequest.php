@@ -35,8 +35,8 @@ class ArticleRequest extends FormRequest
             'title' => ['required', 'string', 'min:4', 'max:255'],
             'content' => ['required', 'string', 'min:2'],
             'category_id' => ['required', 'integer', 'exists:categories,id'],
-            'tags' => ['required', $max_tag_rules],
-            'tags.*' => ['integer', 'exists:tags,id'],
+            'tags' => ['required', 'min:1', $max_tag_rules],
+            'tags.*' => ['required', 'integer', 'exists:tags,id'],
             'path' => [$max_image_rules],
             'path.*' => ['image', 'mimes:png,jpg,jpeg', 'max:2048']
         ];
@@ -48,8 +48,11 @@ class ArticleRequest extends FormRequest
         $max_tags = Tag::MAX_TAGS - ($this->article ? $this->article->tags->count() : 0);
 
         return [
-            'category_id.required' => 'Please select at least 1 Category',
+            'category_id.required' => 'Please select 1 Category',
+            'category_id.exists' => 'You selected The Wrong Category',
             'tags.required' => 'Please choose at least 1 Tag',
+            'tags.*.required' => 'Please choose at least 1 Tag',
+            'tags.*.exists' => 'You choosed The Wrong Tag',
             'tags.max' => "You've reached the maximum of the tagged articles ({$max_tags})",
             'path.max' => "You've reached the maximum of the attached file ({$max_images})"
         ];

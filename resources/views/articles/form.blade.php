@@ -76,7 +76,6 @@
                                     class="mt-1"
                                     value=""
                                     required/>
-                                    <span class="ml-2 mt-1 text-gray-600">{{ __('Empty') }}</span>
                             </x-slot>
                         </x-label>
                     @endforelse
@@ -160,7 +159,6 @@
                                     name="tags[]"
                                     value=""
                                     required/>
-                                    <span class="ml-2 mt-1 text-gray-600">{{ __('Empty') }}</span>
                             </x-slot>
                         </x-label>
                     @endforelse
@@ -175,6 +173,11 @@
                         {{ __("You've reached the maximum of the tagged articles (10/10)") }}
                     </span>
                 @endif
+                @error('tags.*')
+                    <span class="text-xs text-red-600">
+                        {{ " - $message" }}
+                    </span>
+                @enderror
                 @error('tags')
                     <span class="text-xs text-red-600">
                         {{ " - $message" }}
