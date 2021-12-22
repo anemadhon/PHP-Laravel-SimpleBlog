@@ -11,9 +11,12 @@ class CategoryController extends Controller
     {
         return view('articles.categories', [
             'category' => $category->load(['articles' => function($query) {
-                $query->when(!auth()->user()->is_admin, function () use ($query)
+                $query->when(!auth()->user()->is_admin, function($query)
                 {
                     $query->where('user_id', auth()->id());
+                })->when(request('keyword'), function($query)
+                {
+                    $query->where('title', 'like', '%'.request('keyword').'%');
                 })->latest();
             }, 'articles.images', 'articles.tags', 'articles.user'])
         ]);

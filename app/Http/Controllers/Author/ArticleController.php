@@ -19,10 +19,22 @@ class ArticleController extends Controller
      */
     public function index()
     {
+        if (auth()->user()->is_admin) {
+            $articles = Article::when(request('keyword'), function($query)
+            {
+                $query->where('title', 'like', '%'.request('keyword').'%');
+            })->with(['category', 'tags', 'images'])->latest()->paginate(8)->withQueryString();
+        }
+
+        if (!auth()->user()->is_admin) {
+            $articles = auth()->user()->articles()->when(request('keyword'), function($query)
+            {
+                $query->where('title', 'like', '%'.request('keyword').'%');
+            })->with(['category', 'tags', 'images'])->latest()->paginate(8)->withQueryString();
+        }
+
         return view('articles.index', [
-            'articles' => auth()->user()->is_admin ? 
-            Article::with(['category', 'tags', 'images', 'user'])->latest()->paginate(8) : 
-            auth()->user()->articles()->with(['category', 'tags', 'images'])->latest()->paginate(8)
+            'articles' => $articles
         ]);
     }
 
@@ -153,7 +165,7 @@ class ArticleController extends Controller
         $this->authorize('is-yours', $article);
 
         $article->tags()->detach();
-        
+
         $article->images()->each(function ($image)
         {
             $image->delete();

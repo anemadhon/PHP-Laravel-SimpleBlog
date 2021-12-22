@@ -17,7 +17,10 @@ class CategoryController extends Controller
     public function index()
     {
         return view('categories.index', [
-            'categories' => Category::paginate(6)
+            'categories' => Category::when(request('keyword'), function($query)
+            {
+                $query->where('name', 'like', '%'.request('keyword').'%');
+            })->paginate(6)
         ]);
     }
 

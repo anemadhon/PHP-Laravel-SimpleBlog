@@ -14,6 +14,9 @@ class TagController extends Controller
                 $query->when(!auth()->user()->is_admin, function () use ($query)
                 {
                     $query->where('user_id', auth()->id());
+                })->when(request('keyword'), function($query)
+                {
+                    $query->where('title', 'like', '%'.request('keyword').'%');
                 })->latest();
             }, 'articles.images', 'articles.tags', 'articles.user', 'articles.category'])
         ]);
