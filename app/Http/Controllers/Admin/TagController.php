@@ -98,6 +98,8 @@ class TagController extends Controller
      */
     public function destroy(Tag $tag)
     {
+        $tag->articles()->detach();
+        
         $tag->delete();
 
         return redirect()->back()->with('success', 'Tag deleted.');

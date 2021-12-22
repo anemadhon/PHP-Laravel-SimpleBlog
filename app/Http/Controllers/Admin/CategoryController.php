@@ -93,6 +93,15 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
+        $category->articles->each(function($article)
+        {
+            $article->tags()->detach();
+            if ($article->images()->count() > 0) {
+                $article->images()->delete();
+            }
+            $article->delete();
+        });
+
         $category->delete();
 
         return redirect()->back()->with('success', 'Category deleted.');

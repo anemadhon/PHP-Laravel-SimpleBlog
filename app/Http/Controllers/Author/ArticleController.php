@@ -151,6 +151,15 @@ class ArticleController extends Controller
     public function destroy(Article $article)
     {
         $this->authorize('is-yours', $article);
+
+        $article->tags()->detach();
+        
+        $article->images()->each(function ($image)
+        {
+            $image->delete();
+        });
+
+        $article->delete();
         
         return redirect()->back()->with('success', 'Article deleted.');
     }
