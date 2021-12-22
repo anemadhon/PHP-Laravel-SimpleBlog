@@ -23,8 +23,8 @@
     @endif
 
     <div class="p-4 bg-white rounded-lg shadow-xs">
-        <div class="flex justify-between mb-6">
-            <div class="inline-flex overflow-hidden rounded-lg shadow-md left-0">
+        <div class="grid gap-6 mb-6 md:grid-cols-2">
+            <div class="flex items-center rounded-lg shadow-xs">
                 <a href="{{ route('author.articles.create') }}" 
                     class="flex items-center justify-between px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
                 >

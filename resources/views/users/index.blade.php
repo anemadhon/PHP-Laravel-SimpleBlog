@@ -51,7 +51,7 @@
                     @forelse ($users as $user)
                         <tr class="text-gray-700">
                             <td class="px-4 py-3 text-sm text-center">
-                                {{ $loop->iteration }}
+                                {{ $users->firstItem() + $loop->index }}
                             </td>
                             <td class="px-4 py-3 text-sm">
                                 {{ $user->name }}
