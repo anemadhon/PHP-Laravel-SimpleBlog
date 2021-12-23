@@ -16,7 +16,7 @@
             <div class="px-4 py-2 -mx-3">
                 <div class="mx-3">
                     <span class="font-semibold text-green-500">Success</span>
-                    <p class="text-sm text-gray-600">{{ $message }}</p>
+                    <p class="text-sm text-gray-600">{!! $message !!}</p>
                 </div>
             </div>
         </div>
