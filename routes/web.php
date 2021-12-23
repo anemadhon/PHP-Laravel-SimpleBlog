@@ -31,7 +31,7 @@ Route::group([
 
 require __DIR__.'/auth.php';
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->middleware('is.admin')->name('users.index');
     
     Route::get('dashboard', \App\Http\Controllers\Author\DashboardController::class)->name('dashboard');
