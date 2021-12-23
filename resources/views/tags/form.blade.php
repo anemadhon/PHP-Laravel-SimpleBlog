@@ -16,7 +16,7 @@
                          id="name"
                          name="name"
                          class="block w-full"
-                         value="{{ old('name', isset($tag) ? $tag->name : '') }}"
+                         value="{{ old('name', $tag->name ?? '') }}"
                          required/>
                 @error('name')
                     <span class="text-xs text-red-600">

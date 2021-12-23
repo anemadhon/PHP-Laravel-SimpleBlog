@@ -16,7 +16,7 @@
                          id="title"
                          name="title"
                          class="block w-full"
-                         value="{{ old('title', isset($article) ? $article->title : '') }}"
+                         value="{{ old('title', $article->title ?? '') }}"
                          required/>
                 @error('title')
                     <span class="text-xs text-red-600">
@@ -40,7 +40,7 @@
                         focus:ring focus:ring-primary-200 
                         focus:ring-opacity-50 
                         focus-within:text-primary-600"
-                        required>{{ old('content', isset($article) ? $article->content : '') }}</textarea>
+                        required>{{ old('content', $article->content ?? '') }}</textarea>
                 @error('content')
                     <span class="text-xs text-red-600">
                         {{ $message }}

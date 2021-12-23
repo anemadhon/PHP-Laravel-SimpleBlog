@@ -42,6 +42,21 @@
                     </span>
                 @enderror
             </div>
+            
+            <div class="mt-4">
+                <x-label for="username" :value="__('Username')"/>
+                <x-input type="text"
+                         id="username"
+                         name="username"
+                         class="block w-full"
+                         value="{{ old('username', auth()->user()->username) }}"
+                         required/>
+                @error('username')
+                    <span class="text-xs text-red-600">
+                        {{ $message }}
+                    </span>
+                @enderror
+            </div>
 
             <div class="mt-4">
                 <x-label for="email" :value="__('Email')"/>

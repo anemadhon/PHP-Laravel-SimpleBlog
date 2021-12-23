@@ -15,14 +15,13 @@ class ProfileController extends Controller
 
     public function update(ProfileUpdateRequest $request)
     {
-        if ($request->password) {
-            auth()->user()->update(['password' => Hash::make($request->password)]);
-        }
+        $validated = $request->validated();
 
-        auth()->user()->update([
-            'name' => $request->name,
-            'email' => $request->email,
-        ]);
+        if ($request->password) {
+            $validated['password'] = Hash::make($request->password);
+        }
+        
+        auth()->user()->update($validated);
 
         return redirect()->back()->with('success', 'Profile updated.');
     }

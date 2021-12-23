@@ -16,7 +16,7 @@
                          id="name"
                          name="name"
                          class="block w-full"
-                         value="{{ old('name', isset($category) ? $category->name : '') }}"
+                         value="{{ old('name', $category->name ?? '') }}"
                          required/>
                 @error('name')
                     <span class="text-xs text-red-600">
