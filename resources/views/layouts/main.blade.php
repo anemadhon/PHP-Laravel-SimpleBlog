@@ -19,14 +19,12 @@
     class="flex h-screen bg-gray-50"
 >
     <div class="flex flex-col flex-1 w-full">
-        <header class="z-10 py-6 bg-white shadow-md">
+        <header class="z-10 py-4 bg-white shadow-md">
             <div class="container flex justify-between items-center mx-auto h-full text-purple-600 md:justify-end">
                 @if (Route::has('login'))
-                    <div class="flex flex-shrink-0 items-center space-x-6">
-                        <div class="align-middle fixed right-0 px-10 sm:block sm:px-8">
-                            <a href="{{ route('login') }}" class="font-medium text-sm">Login</a>
-                            <a href="{{ route('me') }}" class="ml-2 font-medium text-sm">Me</a>
-                        </div>
+                    <div class="px-10 sm:block sm:px-8">
+                        <a href="{{ route('login') }}" class="font-medium text-sm">Login</a>
+                        <a href="{{ route('me') }}" class="ml-2 font-medium text-sm">Me</a>
                     </div>
                 @endif
             </div>
