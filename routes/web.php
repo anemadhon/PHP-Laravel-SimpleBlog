@@ -46,6 +46,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     {
         Route::get('articles/{category:slug}/category', \App\Http\Controllers\Author\Article\CategoryController::class)->name('articles.category');
         Route::get('articles/{tag:slug}/tag', \App\Http\Controllers\Author\Article\TagController::class)->name('articles.tag');
+        Route::get('articles/{id}/restore', [\App\Http\Controllers\Author\ArticleController::class, 'restore'])->name('articles.restore');
 
         Route::resource('articles', \App\Http\Controllers\Author\ArticleController::class)->names('articles')->scoped([
             'article' => 'slug'

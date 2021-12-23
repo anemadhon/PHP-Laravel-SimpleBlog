@@ -164,7 +164,7 @@ class ArticleController extends Controller
     {
         $this->authorize('is-yours', $article);
 
-        $article->tags()->detach();
+        $article->tags()->update(['is_deleted' => 1]);
 
         $article->images()->each(function ($image)
         {
@@ -173,6 +173,26 @@ class ArticleController extends Controller
 
         $article->delete();
         
-        return redirect()->back()->with('success', 'Article deleted.');
+        return redirect()->back()->with('success', 'Article deleted. <span>Undo? click <a href="'.route('author.articles.restore', ['id' => $article->id]).'" class="underline font-semibold">here</a></span>');
+    }
+
+    public function restore(int $id)
+    {
+        $article = Article::withTrashed()->find($id);
+        
+        $this->authorize('is-yours', $article);
+
+        if ($article && $article->trashed()) {
+            $article->deletedTags()->update(['is_deleted' => 0]);
+
+            $article->images()->each(function($image)
+            {
+                $image->restore();
+            });
+
+            $article->restore();
+        }
+
+        return redirect()->back()->with('success', 'Article restored.');
     }
 }

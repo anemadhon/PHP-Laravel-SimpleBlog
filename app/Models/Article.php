@@ -6,10 +6,11 @@ use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Article extends Model
 {
-    use HasFactory, Sluggable;
+    use HasFactory, Sluggable, SoftDeletes;
 
     protected $fillable = ['title', 'content', 'slug', 'category_id', 'user_id'];
 
@@ -35,7 +36,14 @@ class Article extends Model
 
     public function tags()
     {
-        return $this->belongsToMany(Tag::class)->as('tag');
+        return $this->belongsToMany(Tag::class)->withPivot(['is_deleted'])
+                        ->wherePivot('is_deleted', false)->as('tag');
+    }
+    
+    public function deletedTags()
+    {
+        return $this->belongsToMany(Tag::class)->withPivot(['is_deleted'])
+                        ->wherePivot('is_deleted', true)->as('tag');
     }
 
     public function sluggable(): array
