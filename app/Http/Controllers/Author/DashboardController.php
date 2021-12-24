@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Author;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 class DashboardController extends Controller
@@ -13,8 +12,7 @@ class DashboardController extends Controller
 
         return view('dashboard', [
             'last_article' => $articles->get(['id', 'slug', 'user_id']),
-            'articles_count' => $articles->count(),
-            'title' => $articles->count() > 1 ? 'Artices' : 'Article'
+            'articles_count' => $articles->count()
         ]);
     }
 }

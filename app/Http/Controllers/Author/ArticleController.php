@@ -5,10 +5,9 @@ namespace App\Http\Controllers\Author;
 use App\Models\Tag;
 use App\Models\Article;
 use App\Models\Category;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\File;
 use App\Http\Requests\ArticleRequest;
+use App\Services\ArticleService;
 
 class ArticleController extends Controller
 {
@@ -19,22 +18,8 @@ class ArticleController extends Controller
      */
     public function index()
     {
-        if (auth()->user()->is_admin) {
-            $articles = Article::when(request('keyword'), function($query)
-            {
-                $query->where('title', 'like', '%'.request('keyword').'%');
-            })->with(['category', 'tags', 'images'])->latest()->paginate(8)->withQueryString();
-        }
-
-        if (!auth()->user()->is_admin) {
-            $articles = auth()->user()->articles()->when(request('keyword'), function($query)
-            {
-                $query->where('title', 'like', '%'.request('keyword').'%');
-            })->with(['category', 'tags', 'images'])->latest()->paginate(8)->withQueryString();
-        }
-
         return view('articles.index', [
-            'articles' => $articles
+            'articles' => (new ArticleService())->list(auth()->user())
         ]);
     }
 
@@ -63,17 +48,10 @@ class ArticleController extends Controller
         $article = auth()->user()->articles()->create($request->safe()->except(['tags']));
 
         if ($request->hasFile('path')) {
-            foreach ($request->file('path') as $path) {
-                $article_path = $path->storeAs('articles', "images/{$article->slug}/{$path->getClientOriginalName()}", 'public');
-                $article->images()->create([
-                    'path' => $article_path
-                ]);
-            }
+            (new ArticleService())->gallery($request->file('path'), $article);
         }
 
-        foreach ($request->safe()->only(['tags']) as $value) {
-            $article->tags()->attach($value);
-        }
+        $article->tags()->sync($request->safe()->only(['tags'])['tags']);
 
         return redirect()->route('author.articles.index')->with('success', 'Article saved.');
     }
@@ -123,32 +101,11 @@ class ArticleController extends Controller
         $article->update($request->safe()->except(['tags']));
 
         if ($request->hasFile('path')) {
-            if ($request->image_flag === 'edit') {
-                File::deleteDirectory(storage_path('app\public\articles\images\\').$article->slug);
-                $article->images()->delete();
-                foreach ($request->file('path') as $path) {
-                    $article_path = $path->storeAs('articles', "images/{$article->slug}/{$path->getClientOriginalName()}", 'public');
-                    $article->images()->create([
-                        'path' => $article_path
-                    ]);
-                }
-            }
-            
-            if ($request->image_flag === 'add') {
-                foreach ($request->file('path') as $path) {
-                    $article_path = $path->storeAs('articles', "images/{$article->slug}/{$path->getClientOriginalName()}", 'public');
-                    $article->images()->create([
-                        'path' => $article_path
-                    ]);
-                }
-            }
+            (new ArticleService())->gallery($request->file('path'), $article, $request->image_flag);
         }
 
         if (($article->tags->count() + count($request->tags)) <= 10) {
-            $article->tags()->detach();
-            foreach ($request->safe()->only(['tags']) as $value) {
-                $article->tags()->attach($value);
-            }
+            $article->tags()->sync($request->safe()->only(['tags'])['tags']);
         }
 
         return redirect()->route('author.articles.index')->with('success', 'Article updated.');
@@ -164,14 +121,7 @@ class ArticleController extends Controller
     {
         $this->authorize('is-yours', $article);
 
-        $article->tags()->update(['is_deleted' => 1]);
-
-        $article->images()->each(function ($image)
-        {
-            $image->delete();
-        });
-
-        $article->delete();
+        (new ArticleService())->delete($article);
         
         return redirect()->back()->with('success', 'Article deleted. <span>Undo? click <a href="'.route('author.articles.restore', ['id' => $article->id]).'" class="underline font-semibold">here</a></span>');
     }
@@ -183,14 +133,7 @@ class ArticleController extends Controller
         $this->authorize('is-yours', $article);
 
         if ($article && $article->trashed()) {
-            $article->deletedTags()->update(['is_deleted' => 0]);
-
-            $article->images()->each(function($image)
-            {
-                $image->restore();
-            });
-
-            $article->restore();
+            (new ArticleService())->restore($article);
         }
 
         return redirect()->back()->with('success', 'Article restored.');

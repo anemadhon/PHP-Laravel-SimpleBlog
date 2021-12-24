@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Category;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CategoryRequest;
+use App\Services\CategoryService;
 
 class CategoryController extends Controller
 {
@@ -50,17 +50,6 @@ class CategoryController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Category  $category
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Category $category)
-    {
-        //
-    }
-
-    /**
      * Show the form for editing the specified resource.
      *
      * @param  \App\Models\Category  $category
@@ -96,16 +85,7 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        $category->articles->each(function($article)
-        {
-            $article->tags()->detach();
-            if ($article->images()->count() > 0) {
-                $article->images()->delete();
-            }
-            $article->delete();
-        });
-
-        $category->delete();
+        (new CategoryService())->delete($category);
 
         return redirect()->back()->with('success', 'Category deleted.');
     }

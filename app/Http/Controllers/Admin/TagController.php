@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Tag;
 use App\Services\TagService;
-use Illuminate\Http\Request;
 use App\Http\Requests\TagRequest;
 use App\Http\Controllers\Controller;
 
@@ -46,21 +45,10 @@ class TagController extends Controller
     public function store(TagRequest $request)
     {
         Tag::create([
-            'name' => (new TagService($request->validated()['name']))->name
+            'name' => (new TagService())->format($request->validated()['name'])
         ]);
 
         return redirect()->route('author.tags.index')->with('success', 'Tag saved.');
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Tag  $tag
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Tag $tag)
-    {
-        //
     }
 
     /**
@@ -87,7 +75,7 @@ class TagController extends Controller
     public function update(TagRequest $request, Tag $tag)
     {
         $tag->update([
-            'name' => (new TagService($request->validated()['name']))->name
+            'name' => (new TagService())->format($request->validated()['name'])
         ]);
 
         return redirect()->route('author.tags.index')->with('success', 'Tag updated.');
@@ -101,9 +89,7 @@ class TagController extends Controller
      */
     public function destroy(Tag $tag)
     {
-        $tag->articles()->detach();
-
-        $tag->delete();
+        (new TagService())->delete($tag);
 
         return redirect()->back()->with('success', 'Tag deleted.');
     }

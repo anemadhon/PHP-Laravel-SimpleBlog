@@ -4,10 +4,15 @@ namespace App\Services;
 
 class TagService
 {
-    public $name;
-    
-    public function __construct(string $name)
+    public function format(string $name)
     {
-        $this->name = str_replace(' ', '-', strtolower($name));
+        return str_replace(' ', '-', strtolower($name));
+    }
+
+    public function delete(object $tag)
+    {
+        $tag->articles()->detach();
+
+        $tag->delete();
     }
 }
