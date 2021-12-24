@@ -10,7 +10,8 @@ Try to complete the challenge from [LaravelDaily](https://github.com/LaravelDail
 - Run __php artisan key:generate__
 - Run __php artisan migrate --seed__ (it has some seeded data for your testing)
 - That's it: launch the main URL.
-- You can login to manage articles with default credentials __admin__ - __password__
+- You can login to manage articles with default credentials __admin__ - __password__ as Admin
+- Or you can register your self to manage your own article as User
 
 Note:
 - To email needs, please login to [mailtrap](https://mailtrap.io/signin) for getting your own config.
