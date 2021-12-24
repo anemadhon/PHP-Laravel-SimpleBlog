@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\WhenSearch;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Cviebrock\EloquentSluggable\Sluggable;
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Article extends Model
 {
-    use HasFactory, Sluggable, SoftDeletes;
+    use HasFactory, Sluggable, SoftDeletes, WhenSearch;
 
     protected $fillable = ['title', 'content', 'slug', 'category_id', 'user_id'];
 
@@ -44,6 +45,14 @@ class Article extends Model
     {
         return $this->belongsToMany(Tag::class)->withPivot(['is_deleted'])
                         ->wherePivot('is_deleted', true)->as('tag');
+    }
+
+    public function scopeWhenNotAdmin($query)
+    {
+        $query->when(!auth()->user()->is_admin, function($query)
+        {
+            $query->where('user_id', auth()->id());
+        });
     }
 
     public function sluggable(): array

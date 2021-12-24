@@ -10,16 +10,12 @@ class ArticleService
     public function list(?object $user)
     {
         if ((!is_null($user) && $user->is_admin) || is_null($user)) {
-            return Article::when(request('keyword'), function($query)
-            {
-                $query->where('title', 'like', '%'.request('keyword').'%');
-            })->with(['category', 'tags', 'images', 'user'])->latest()->paginate(8)->withQueryString();
+            return Article::whenSearch('title')->with(['category', 'tags', 'images', 'user'])
+                            ->latest()->paginate(8)->withQueryString();
         }
 
-        return $user->articles()->when(request('keyword'), function($query)
-        {
-            $query->where('title', 'like', '%'.request('keyword').'%');
-        })->with(['category', 'tags', 'images'])->latest()->paginate(8)->withQueryString();
+        return $user->articles()->whenSearch('title')->with(['category', 'tags', 'images'])
+                ->latest()->paginate(8)->withQueryString();
     }
 
     public function gallery(array $file, object $article, string $flag = '')

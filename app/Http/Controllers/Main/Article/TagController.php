@@ -11,10 +11,7 @@ class TagController extends Controller
     {
         return view('main.articles-tags', [
             'tag' => $tag->load(['articles' => function($query) {
-                $query->when(request('keyword'), function($query)
-                {
-                    $query->where('title', 'like', '%'.request('keyword').'%');
-                })->latest();
+                $query->whenSearch('title')->latest();
             }, 'articles.images', 'articles.tags', 'articles.user', 'articles.category'])
         ]);
     }

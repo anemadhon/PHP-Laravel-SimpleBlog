@@ -17,10 +17,7 @@ class TagController extends Controller
     public function index()
     {
         return view('tags.index', [
-            'tags' => Tag::when(request('keyword'), function($query)
-            {
-                $query->where('name', 'like', '%'.request('keyword').'%');
-            })->paginate(6)
+            'tags' => Tag::whenSearch('name')->paginate(6)
         ]);
     }
 

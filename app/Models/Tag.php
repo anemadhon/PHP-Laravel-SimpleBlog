@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\WhenSearch;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Tag extends Model
 {
-    use HasFactory, Sluggable;
+    use HasFactory, Sluggable, WhenSearch;
 
     protected $fillable = ['name', 'slug'];
 

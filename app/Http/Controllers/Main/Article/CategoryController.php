@@ -11,10 +11,7 @@ class CategoryController extends Controller
     {
         return view('main.articles-categories', [
             'category' => $category->load(['articles' => function($query) {
-                $query->when(request('keyword'), function($query)
-                {
-                    $query->where('title', 'like', '%'.request('keyword').'%');
-                })->latest();
+                $query->whenSearch('title')->latest();
             }, 'articles.images', 'articles.tags', 'articles.user'])
         ]);
     }
